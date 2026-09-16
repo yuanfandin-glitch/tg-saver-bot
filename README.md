@@ -1,6 +1,28 @@
 # tg-saver-bot
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Docker](https://img.shields.io/badge/docker-ready-2496ED.svg)](Dockerfile)
+
 把文件转发给机器人，自动下载到 NAS 磁盘。
+
+> Forward any file to your own Telegram bot, and it lands on your NAS disk.
+> Powered by a Telethon userbot — up to 2GB per file, bypassing the Bot API's 20MB `getFile` limit.
+
+**为什么不是普通机器人：** 官方 Bot API 拉取文件硬上限 20MB，一个视频就废了。本项目用你自己的账号走 MTProto 下载，单文件可到 2GB（Premium 4GB）。
+
+**适合谁：** 手上有 NAS、想把 Telegram 上的文件顺手存到本地的人。丢一个压缩包、一段视频给机器人，剩下的它自己干。
+
+## 特性
+
+- **转发即落盘** —— 转给机器人就下，不用给机器人管理员权限、不用把它拉进频道
+- **突破 20MB 上限** —— 走 MTProto，单文件 2GB / 4GB
+- **相册整组处理** —— 一次转发多图，自动归为一批
+- **自动整理目录** —— 按来源频道和文件类型分文件夹
+- **重复自动跳过** —— 同一文件转发多次只下一次（台账落盘，重启不丢）
+- **实时进度** —— 机器人持续更新下载进度，完成后回报落盘路径
+- **代理支持** —— SOCKS5 / SOCKS4 / HTTP / MTProxy，墙内可用
+- **一键 Docker** —— 群晖 Container Manager 直接起，见 [DEPLOY-NAS.md](DEPLOY-NAS.md)
 
 ## 工作原理
 
@@ -23,6 +45,24 @@ Telegram 频道  ──转发──▶  你的机器人
 | `bot_client` | 机器人 | 回复下载状态、响应 `/start` `/help` `/stats` |
 
 **为什么下载不用机器人自己干：** 官方 Bot API 的 `getFile` 硬上限 20MB，一个大视频就废了。改用你自己的账号走 MTProto，单文件可到 2GB（Premium 4GB），也不消耗机器人的下载配额。
+
+**为什么监听的是「你发给机器人的消息」而不是「机器人收到的消息」：** 同一台客户端发出的消息就在本地，直接就能下载，不需要跨客户端传递 `file_reference`（那个东西有有效期，跨客户端容易失效）。
+
+## 快速开始
+
+```bash
+git clone https://github.com/yuanfandin-glitch/tg-saver-bot.git
+cd tg-saver-bot
+pip install -r requirements.txt
+cp .env.example .env      # Windows: copy .env.example .env
+# 编辑 .env，填 API_ID / API_HASH / BOT_TOKEN / BOT_USERNAME
+python login.py           # 首次登录，生成 user.session
+python main.py            # 启动
+```
+
+在 Telegram 里给机器人发个 `/start`，然后转发一个文件过去试试。
+
+部署到群晖：看 **[DEPLOY-NAS.md](DEPLOY-NAS.md)**（6 步，带检查点和排错表）。
 
 ## 前置准备
 
