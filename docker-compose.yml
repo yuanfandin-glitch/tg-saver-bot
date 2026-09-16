@@ -1,0 +1,48 @@
+services:
+  tg-saver:
+    build: .
+    image: tg-saver:latest
+    container_name: tg-saver
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      TZ: Asia/Shanghai
+
+    # ==================== 存储路径 ====================
+    #
+    # 每行写法固定是：    群晖上的文件夹 : 容器里的文件夹
+    #
+    #   冒号【左边】= 你群晖上的真实文件夹。想存哪儿就改这里。
+    #   冒号【右边】= 容器内部的名字，程序里写死的。一个字都别动。
+    #
+    # 记住一句话：只改左边，右边保持原样。
+    #
+    # 第 1 行  ./data:/data
+    #   存登录凭据和下载记录。开头的 ./ 意思是「跟 docker-compose.yml
+    #   放在同一个目录」，不用动，让它跟着项目走就行。
+    #
+    # 第 2 行  /volume1/telegram:/downloads
+    #   下载的文件最终落在哪儿。要改的就是这一行的左边。
+    #
+    #   /volume1 是群晖固定的写法，后面的 telegram 就是共享文件夹的名字。
+    #   群晖的共享文件夹在系统里都是 /volume1/共享文件夹名。
+    #
+    #   想存到「video」共享文件夹下的「tg下载」里，就写成：
+    #       - /volume1/video/tg下载:/downloads
+    #   想存到「docker」共享文件夹下的「downloads」里，就写成：
+    #       - /volume1/docker/downloads:/downloads
+    #
+    #   两个注意点：
+    #   1. 冒号左边的目录要先在群晖上建好（File Station 里右键新建文件夹）。
+    #   2. 路径里可以用中文，但别带空格。
+    #
+    volumes:
+      - ./data:/data
+      - /volume1/telegram:/downloads
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

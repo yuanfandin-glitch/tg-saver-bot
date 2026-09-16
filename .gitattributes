@@ -1,0 +1,13 @@
+# 仓库内统一用 LF 换行。
+# Windows 上默认会把文本文件存成 CRLF，提交后 Dockerfile / YAML 在 Linux 上
+# 可能解析出错（尤其 Dockerfile 的续行）。这里强制归一。
+* text=auto eol=lf
+
+# 二进制文件不做换行转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.session binary
