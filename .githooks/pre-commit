@@ -1,0 +1,34 @@
+#!/bin/sh
+# 提交前自动扫一遍暂存区，发现疑似凭据就拦住这次提交。
+#
+# 启用（在仓库根目录执行一次）：
+#     git config core.hooksPath .githooks
+#
+# 临时绕过（确认是误报时）：
+#     git commit --no-verify
+#
+# 注意：钩子只能防「还没提交的」泄漏。已经 push 出去的密钥，
+# 唯一的解法是去服务端作废它——改写历史救不回来。
+
+python_cmd=""
+for c in python python3 py; do
+    if command -v "$c" >/dev/null 2>&1; then python_cmd="$c"; break; fi
+done
+
+if [ -z "$python_cmd" ]; then
+    echo "[pre-commit] 找不到 python，跳过凭据检查" >&2
+    exit 0
+fi
+
+"$python_cmd" scripts/check_secrets.py --staged
+status=$?
+
+if [ $status -ne 0 ]; then
+    echo ""
+    echo "[pre-commit] 已阻止本次提交。"
+    echo "  确认是误报 → git commit --no-verify"
+    echo "  确实是密钥 → 从文件里删掉，改用环境变量或 .env"
+    exit 1
+fi
+
+exit 0
