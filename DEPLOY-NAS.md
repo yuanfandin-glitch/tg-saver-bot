@@ -13,7 +13,7 @@
 | 项目 | 从哪来 | 长什么样 |
 |---|---|---|
 | `API_ID` / `API_HASH` | my.telegram.org/apps | 数字 / 32 位十六进制串 |
-| `BOT_TOKEN` | @BotFather | `<BOT_TOKEN>` |
+| `BOT_TOKEN` | @BotFather | `1234567890:AAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx` |
 | `BOT_USERNAME` | @BotFather | `your_saver_bot`（不带 `@`） |
 | `user.session` | 电脑上跑过 `login.py` | 项目 `data/` 文件夹里，28KB 左右 |
 
@@ -88,15 +88,17 @@ cp .env.example .env
 
 ### 3.1 填凭据
 
+从你电脑上项目里的 `.env` 复制这几行过来，**值要照你自己的填，下面只是格式示意**：
+
 ```ini
-API_ID=<API_ID>
-API_HASH=<API_HASH>
-BOT_TOKEN=<BOT_TOKEN>
-BOT_USERNAME=your_saver_bot
-ALLOWED_USERS=<YOUR_USER_ID>
+API_ID=1234567
+API_HASH=0123456789abcdef0123456789abcdef
+BOT_TOKEN=1234567890:AAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+BOT_USERNAME=你的机器人用户名
+ALLOWED_USERS=你的用户ID
 ```
 
-直接把你电脑上 `.env` 里的这几行抄过来。
+> ⚠️ **别把这份清单连同真实凭据一起提交到 git。** 如果你打算把配置好的版本存起来，先确认 `.env` 在 `.gitignore` 里，或者干脆只在 NAS 上就地编辑、不纳入版本控制。
 
 ### 3.2 目录改回容器路径 ⚠️
 
